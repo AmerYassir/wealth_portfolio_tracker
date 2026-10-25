@@ -7,13 +7,15 @@ export default function AssetTable({ assets, canWrite, onDelete }) {
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ background: 'var(--bg-elev-2)', borderBottom: '1px solid var(--border)' }}>
-            <Th>Symbol</Th><Th>Type</Th><Th align="right">Quantity</Th><Th align="right">Cost basis</Th>
+            {/* <Th>Symbol</Th><Th>Type</Th><Th align="right">Quantity</Th><Th align="right">Cost basis</Th> */}
+            <Th>ID</Th><Th>Symbol</Th><Th>Type</Th><Th align="right">Quantity</Th><Th align="right">Cost basis</Th>
             {canWrite && <Th align="right" />}
           </tr>
         </thead>
         <tbody>
           {assets.map((a) => (
             <tr key={a.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                <Td>{a.id}</Td>
               <Td><span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem' }}><Package size={14} style={{ color: 'var(--text-muted)' }} />{a.symbol}</span></Td>
               <Td><TypePill type={a.type} /></Td>
               <Td align="right" className="num">{a.quantity}</Td>

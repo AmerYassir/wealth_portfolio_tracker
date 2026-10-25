@@ -12,6 +12,8 @@ from agent.agent_tools import (
     list_my_portfolios,
     query_transactions,
     set_current_user,
+    add_asset,
+    log_transaction,
 )
 from core.models import Asset, Membership, Portfolio, Transaction
 
@@ -91,3 +93,26 @@ class ToolIsolationTests(TestCase):
         set_current_user(AnonymousUser())
         with self.assertRaises(PermissionError):
             list_my_portfolios()
+
+
+def test_viewer_cannot_add_asset(self):
+    self._as(self.viewer)
+    result = add_asset(self.shared.id, "STOCK", "MSFT", "1", "100")
+    self.assertEqual(result, {"error": "not found or access denied"})
+
+def test_editor_can_add_asset(self):
+    self._as(self.editor)
+    result = add_asset(self.shared.id, "STOCK", "MSFT", "1", "100")
+    self.assertIn("id", result)
+    self.assertEqual(result["symbol"], "MSFT")
+
+def test_viewer_cannot_log_transaction(self):
+    self._as(self.viewer)
+    result = log_transaction(self.shared.id, self.shared_asset.id, "BUY", "100", "2024-06-01")
+    self.assertEqual(result, {"error": "not found or access denied"})
+
+def test_editor_can_log_transaction(self):
+    self._as(self.editor)
+    result = log_transaction(self.shared.id, self.shared_asset.id, "BUY", "100", "2024-06-01")
+    self.assertIn("id", result)
+    self.assertEqual(result["type"], "BUY")

@@ -4,6 +4,7 @@ from django_ag_ui import AGUIServer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from agent.agent_tools import registry, set_current_user
+from audit.logger import DatabaseAuditLogger
 
 
 def get_user(request):
@@ -25,6 +26,7 @@ agent = AGUIServer(
     registry,
     get_user=get_user,
     require_authenticated=True,
+    audit_logger=DatabaseAuditLogger(),
 )
 
 urlpatterns = [

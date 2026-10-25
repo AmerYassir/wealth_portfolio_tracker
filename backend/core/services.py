@@ -105,8 +105,58 @@ def user_role_on_portfolio(user, portfolio_id: int) -> Optional[str]:
         .first()
     )
 
+def log_transaction(
+    user,
+    portfolio_id: int,
+    asset_id: int,
+    tx_type: str,
+    amount,
+    occurred_at,
+):
+    """Log a transaction on a portfolio the user can write to.
 
-# --- Phase 6 slot (out of scope for this chat) ------------------------------
-# Adding `log_transaction(user, portfolio_id, asset_id, type, amount, occurred_at)`
-# here plus a corresponding wrapper in agent/tools.py is the only change Phase 6
-# requires. No restructuring.
+    Returns the created Transaction, or None if the user lacks write access
+    or the asset does not belong to the portfolio. Never raises on permission
+    denial — matches the contract of every other function in this module.
+    """
+    role = user_role_on_portfolio(user, portfolio_id)
+    if role not in ("OWNER", "EDITOR"):
+        return None
+
+    portfolio = get_portfolio_for_user(user, portfolio_id)
+    if portfolio is None:
+        return None
+
+    try:
+        asset = Asset.objects.get(pk=asset_id, portfolio=portfolio)
+    except Asset.DoesNotExist:
+        return None
+
+    return Transaction.objects.create(
+        asset=asset,
+        type=tx_type,
+        amount=amount,
+        occurred_at=occurred_at,
+    )
+
+def add_asset(user, portfolio_id: int, asset_type: str, symbol: str, quantity, cost_basis):
+    """Create an asset in a portfolio the user can write to.
+
+    Returns the created Asset, or None if the user lacks write access.
+    Never raises on permission denial.
+    """
+    role = user_role_on_portfolio(user, portfolio_id)
+    if role not in ("OWNER", "EDITOR"):
+        return None
+
+    portfolio = get_portfolio_for_user(user, portfolio_id)
+    if portfolio is None:
+        return None
+
+    return Asset.objects.create(
+        portfolio=portfolio,
+        type=asset_type,
+        symbol=symbol,
+        quantity=quantity,
+        cost_basis=cost_basis,
+    )
