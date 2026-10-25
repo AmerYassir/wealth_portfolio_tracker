@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 import { Loader2, LogIn } from 'lucide-react';
 import { login } from '../api/client.js';
 import { setTokens } from '../auth.js';
@@ -54,6 +54,9 @@ export default function Login() {
         </form>
         <p style={{ fontSize: '0.8rem', color: 'var(--text-faint)', textAlign: 'center', marginTop: '1.25rem', marginBottom: 0 }}>
           Try <code style={{ background: 'var(--bg-elev-2)', padding: '0.1rem 0.35rem', borderRadius: 4 }}>viewer</code> / <code style={{ background: 'var(--bg-elev-2)', padding: '0.1rem 0.35rem', borderRadius: 4 }}>pass1234</code>
+        </p>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '0.75rem', marginBottom: 0 }}>
+            New here? <Link to="/signup">Create an account</Link>
         </p>
       </div>
     </div>
