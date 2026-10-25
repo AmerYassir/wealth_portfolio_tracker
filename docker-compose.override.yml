@@ -1,0 +1,45 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      target: dev
+    env_file:
+      - .env.base
+      - .env.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app:z
+      - /app/__pycache__
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request as u; u.urlopen('http://127.0.0.1:8000/admin/login/').read()"
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+
+  frontend:
+    build:
+      context: ./frontend
+      target: dev
+    env_file:
+      - .env.base
+      - .env.dev
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app:z
+      - /app/node_modules
+    # Runs before Vite; installs into the anonymous /app/node_modules volume.
+    command:
+      ["sh", "-c", "npm install && npm run dev -- --host 0.0.0.0 --port 5173"]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-s", "http://127.0.0.1:5173/"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s

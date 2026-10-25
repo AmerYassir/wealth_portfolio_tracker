@@ -1,0 +1,20 @@
+# env files (secrets)
+.env.base
+.env.dev
+.env.prod
+.env
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+*.sqlite3
+.pytest_cache/
+
+# node
+node_modules/
+dist/
+build/
+
+# os
+.DS_Store
